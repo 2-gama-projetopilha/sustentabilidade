@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pilhas em Rota - Descarte Consciente em Poços de Caldas</title>
+    
+    <!-- Fontes e Ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --verde-floresta: #173D32;
+            --verde-natural: #5E8C61;
+            --verde-limao: #C6DF83;
+            --verde-menta: #A3E635;
+            --verde-oliva: #3F6212;
+            --verde-esmeralda: #047857;
+            --verde-musgo: #2D4A27;
+            --verde-claro-fundo: #ECFDF5;
+            --creme: #F7F5EC;
+            --texto-escuro: #212529;
+            --texto-claro: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--creme);
+            color: var(--texto-escuro);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-7px) rotate(5deg); }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--verde-floresta), var(--verde-esmeralda), var(--verde-natural));
+            color: var(--texto-claro);
+            text-align: center;
+            padding: 35px 15px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-bg-icons {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.18;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 2rem;
+            pointer-events: none;
+            padding: 10px;
+        }
+
+        .float-1 { animation: floatIcon 4s infinite ease-in-out; }
+        .float-2 { animation: floatIcon 3.2s infinite ease-in-out 0.5s; }
+        .float-3 { animation: floatIcon 4.5s infinite ease-in-out 1s; }
+
+        .header-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo-icon {
+            font-size: 3.2rem;
+            color: var(--verde-limao);
+            margin-bottom: 6px;
+            display: inline-block;
+            animation: pulseLogo 2.5s infinite ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.1rem;
+            color: var(--verde-limao);
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            opacity: 0.95;
+        }
+
+        .badge-header {
+            display: inline-block;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.18);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            border: 1px solid var(--verde-limao);
+            color: #FFFFFF;
+        }
+
+        nav {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 18px auto;
+            max-width: 800px;
+            padding: 0 10px;
+        }
+
+        .nav-btn {
+            background-color: var(--verde-floresta);
+            color: var(--texto-claro);
+            border: none;
+            padding: 10px 6px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn i {
+            font-size: 1rem;
+        }
+
+        .nav-btn:hover, .nav-btn:active {
+            background-color: var(--verde-esmeralda);
+        }
+
+        .nav-btn.active {
+            background-color: var(--verde-limao);
+            color: var(--verde-floresta);
+            box-shadow: 0 4px 12px rgba(198, 223, 131, 0.5);
+        }
+
+        main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 10px 30px 10px;
+        }
+
+        .section-card {
+            display: none;
+            background-color: #FFFFFF;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            margin-top: 10px;
+            border-top: 6px solid var(--verde-esmeralda);
+        }
+
+        .section-card.active {
+            display: block;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        h2.section-title {
+            color: var(--verde-floresta);
+            font-size: 1.35rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--creme);
+            padding-bottom: 8px;
+        }
+
+        .map-info {
+            background-color: var(--verde-claro-fundo);
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            font-size: 0.86rem;
+            border-left: 5px solid var(--verde-esmeralda);
+            color: var(--verde-musgo);
+        }
+
+        .map-container-box {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            border-radius: 14px;
+            border: 2px solid var(--verde-natural);
+            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .map-container-box iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            transition: transform 0.4s ease;
+        }
+
+        .region-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .region-btn {
+            background-color: #E2E8F0;
+            color: var(--verde-floresta);
+            border: 1px solid #CBD5E1;
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .region-btn:hover, .region-btn.active {
+            background-color: var(--verde-esmeralda);
+            color: #FFFFFF;
+            border-color: var(--verde-esmeralda);
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background-color: var(--verde-claro-fundo);
+            color: var(--verde-floresta);
+            border: 1px solid var(--verde-natural);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background-color: var(--verde-floresta);
+            color: var(--verde-limao);
+        }
+
+        .pontos-lista-title {
+            color: var(--verde-floresta);
+            font-size: 1.15rem;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ponto-item {
+            background-color: var(--creme);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            border-left: 5px solid var(--verde-natural);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .ponto-item:hover {
+            transform: translateX(4px);
+            border-left-color: var(--verde-esmeralda);
+        }
+
+        .ponto-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            font-size: 0.68rem;
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-weight: 600;
+            background: #D1FAE5;
+            color: var(--verde-esmeralda);
+        }
+
+        .ponto-item h3 {
+            color: var(--verde-floresta);
+            font-size: 1rem;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-right: 75px;
+        }
+
+        .ponto-item p {
+            font-size: 0.84rem;
+            color: var(--texto-escuro);
+            margin-top: 3px;
+        }
+
+        .calc-box {
+            background: linear-gradient(135deg, #DCFCE7, #F7F5EC);
+            border: 2px solid var(--verde-natural);
+            border-radius: 16px;
+            padding: 18px;
+            margin: 16px 0;
+        }
+
+        .calc-box h3 {
+            color: var(--verde-floresta);
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .calc-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .calc-input-group input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--verde-natural);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .calc-input-group button {
+            background-color: var(--verde-floresta);
+            color: var(--verde-limao);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .calc-results {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .result-card {
+            background: #FFFFFF;
+            padding: 10px;
+            border-radius: 10px;
+            border-bottom: 3px solid var(--verde-esmeralda);
+        }
+
+        .result-card .num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--verde-floresta);
+        }
+
+        .result-card .label {
+            font-size: 0.72rem;
+            color: #555;
+        }
+
+        .accordion-item {
+            background-color: var(--creme);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+
+        .accordion-header {
+            padding: 14px 16px;
+            font-weight: 600;
+            color: var(--verde-floresta);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .accordion-header i.arrow-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-header i.arrow-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 16px;
+            background-color: #FFFFFF;
+            font-size: 0.88rem;
+            display: none;
+            border-top: 1px solid #E2E8F0;
+        }
+
+        .accordion-item.active .accordion-content {
+            display: block;
+        }
+
+        .content-image {
+            width: 100%;
+            max-height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 12px;
+            border: 1px solid #CBD5E1;
+        }
+
+        .recycling-steps {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .step-card {
+            background: var(--verde-claro-fundo);
+            border: 1px solid #A7F3D0;
+            border-radius: 10px;
+            padding: 12px;
+            border-top: 4px solid var(--verde-esmeralda);
+        }
+
+        .step-card h5 {
+            color: var(--verde-floresta);
+            font-size: 0.88rem;
+            margin-bottom: 4px;
+        }
+
+        .step-card p {
+            font-size: 0.78rem;
+            color: #334155;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+
+        table th {
+            background-color: var(--verde-floresta);
+            color: var(--verde-limao);
+            padding: 8px;
+        }
+
+        table td {
+            padding: 8px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .metals-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .metal-card {
+            background: #FEF2F2;
+            border-left: 4px solid #EF4444;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: var(--verde-claro-fundo);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            border-top: 4px solid var(--verde-esmeralda);
+        }
+
+        .stat-card .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--verde-floresta);
+        }
+
+        .stat-card .desc {
+            font-size: 0.72rem;
+            color: var(--verde-musgo);
+        }
+
+        .progress-box {
+            background-color: var(--verde-claro-fundo);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+            border: 1px solid #A7F3D0;
+        }
+
+        .progress-bar-bg {
+            background: #CBD5E1;
+            border-radius: 20px;
+            height: 14px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--verde-natural), var(--verde-esmeralda));
+            height: 100%;
+            width: 76%;
+            border-radius: 20px;
+        }
+
+        .info-box {
+            background-color: var(--creme);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 14px;
+        }
+
+        .info-box h3 {
+            color: var(--verde-floresta);
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .chart-container {
+            position: relative;
+            margin: 10px 0;
+            height: 220px;
+            width: 100%;
+        }
+
+        /* ABA COMPARTILHAR */
+        .share-container {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .share-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 16px 0;
+        }
+
+        .share-btn {
+            background-color: #25D366;
+            color: #FFFFFF;
+            border: none;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .share-btn.copy-btn {
+            background-color: var(--verde-floresta);
+            color: var(--verde-limao);
+        }
+
+        .share-btn:active {
+            transform: scale(0.98);
+        }
+
+        .summary-list {
+            list-style: none;
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .summary-list li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #CBD5E1;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .summary-list li i {
+            color: var(--verde-esmeralda);
+            margin-top: 3px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--verde-floresta);
+            color: var(--texto-claro);
+            font-size: 0.82rem;
+            margin-top: 25px;
+        }
+
+        footer i {
+            color: var(--verde-limao);
+            margin: 0 3px;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6rem; }
+            nav { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+            .nav-btn { font-size: 0.75rem; padding: 8px 4px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .calc-results { grid-template-columns: 1fr; }
+            .metals-grid { grid-template-columns: 1fr; }
+            .recycling-steps { grid-template-columns: 1fr; }
+            .map-container-box { height: 320px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-bg-icons">
+            <i class="fa-solid fa-leaf float-1"></i>
+            <i class="fa-solid fa-earth-americas float-2"></i>
+            <i class="fa-solid fa-bolt float-3"></i>
+            <i class="fa-solid fa-recycle float-1"></i>
+            <i class="fa-solid fa-seedling float-2"></i>
+        </div>
+        <div class="header-container">
+            <div class="logo-icon">
+                <i class="fa-solid fa-battery-half"></i>
+            </div>
+            <h1>Pilhas em Rota</h1>
+            <p class="subtitle">Conscientização e Descarte Correto em Poços de Caldas - MG</p>
+            <div class="badge-header">
+                <i class="fa-solid fa-shield-halved"></i> Projeto Escolar de Logística Reversa <i class="fa-solid fa-leaf"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVEGAÇÃO ENTRE ABAS -->
+    <nav>
+        <button class="nav-btn active" onclick="openSection('mapa', this)">
+            <i class="fa-solid fa-map-location-dot"></i>
+            <span>Mapa</span>
+        </button>
+        <button class="nav-btn" onclick="openSection('pesquisa', this)">
+            <i class="fa-solid fa-microscope"></i>
+            <span>Pesquisa</span>
+        </button>
+        <button class="nav-btn" onclick="openSection('escola', this)">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>Projeto</span>
+        </button>
+        <button class="nav-btn" onclick="openSection('compartilhar', this)">
+            <i class="fa-solid fa-share-nodes"></i>
+            <span>Compartilhar</span>
+        </button>
+    </nav>
+
+    <main>
+
+        <!-- SEÇÃO 1: GOOGLE MAPS INTERATIVO -->
+        <section id="mapa" class="section-card active">
+            <h2 class="section-title">
+                <i class="fa-solid fa-map-marked-alt"></i> Locais de Descarte em Poços de Caldas
+            </h2>
+            
+            <div class="map-info">
+                <i class="fa-solid fa-info-circle"></i> Use os botões abaixo para focar nas regiões da cidade no mapa do Google:
+            </div>
+
+            <!-- GOOGLE MAPS DA CIDADE -->
+            <div class="map-container-box">
+                <iframe id="googleMapIframe" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d59302.34827010419!2d-46.6028885!3d-21.7888125!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c92c3a505f5dfd%3A0x6b9d62d2bc0f5d0!2sPo%C3%A7os%20de%20Caldas%2C%20MG!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+
+            <!-- BOTÕES PARA FOCAR NAS REGIÕES NO MAPA -->
+            <div class="region-bar">
+                <button class="region-btn active" onclick="carregarRegiaoMapa('visão geral', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d59302.34827010419!2d-46.6028885!3d-21.7888125!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c92c3a505f5dfd%3A0x6b9d62d2bc0f5d0!2sPo%C3%A7os%20de%20Caldas%2C%20MG!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr', this)">
+                    <i class="fa-solid fa-globe"></i> Poços de Caldas (Geral)
+                </button>
+                <button class="region-btn" onclick="carregarRegiaoMapa('centro', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14825.21586738596!2d-46.568000!3d-21.788000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c92c39fa421e43%3A0x86bb117c77d56e0!2sCentro%2C%20Po%C3%A7os%20de%20Caldas%20-%20MG!5e0!3m2!1spt-BR!2sbr!4v1700000000001!5m2!1spt-BR!2sbr', this)">
+                    <i class="fa-solid fa-city"></i> Centro
+                </button>
+                <button class="region-btn" onclick="carregarRegiaoMapa('zona leste', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14824.80000000000!2d-46.538000!3d-21.782000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c92c81a2982efb%3A0x897914e7a2b9e693!2sParque%20Primavera%2C%20Po%C3%A7os%20de%20Caldas%20-%20MG!5e0!3m2!1spt-BR!2sbr!4v1700000000002!5m2!1spt-BR!2sbr', this)">
+                    <i class="fa-solid fa-compass"></i> Região Leste
+                </button>
+                <button class="region-btn" onclick="carregarRegiaoMapa('zona oeste', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14825.00000000000!2d-46.582000!3d-21.781000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c92c13d7cd1235%3A0x6b772c67ad7818e8!2sJardim%20Country%20Club%2C%20Po%C3%A7os%20de%20Caldas%20-%20MG!5e0!3m2!1spt-BR!2sbr!4v1700000000003!5m2!1spt-BR!2sbr', this)">
+                    <i class="fa-solid fa-compass"></i> Região Oeste
+                </button>
+                <button class="region-btn" onclick="carregarRegiaoMapa('zona sul', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14823.00000000000!2d-46.565000!3d-21.815000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94c92c431b8180c5%3A0x8a927a44f5bf77ab!2sCohab%2C%20Po%C3%A7os%20de%20Caldas%20-%20MG!5e0!3m2!1spt-BR!2sbr!4v1700000000004!5m2!1spt-BR!2sbr', this)">
+                    <i class="fa-solid fa-compass"></i> Região Sul
+                </button>
+            </div>
+
+            <!-- FILTRO RÁPIDO DE PONTOS -->
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filtrarPontos('todos', this)"><i class="fa-solid fa-list-check"></i> Todos (11)</button>
+                <button class="filter-btn" onclick="filtrarPontos('centro', this)"><i class="fa-solid fa-city"></i> Centro</button>
+                <button class="filter-btn" onclick="filtrarPontos('zeladoria', this)"><i class="fa-solid fa-building-user"></i> Zeladorias</button>
+                <button class="filter-btn" onclick="filtrarPontos('comercio', this)"><i class="fa-solid fa-store"></i> Lojas & Farmácias</button>
+            </div>
+
+            <h3 class="pontos-lista-title">
+                <i class="fa-solid fa-recycle"></i> Pontos de Coleta Cadastrados
+            </h3>
+
+            <div class="ponto-item zeladoria" id="ponto-leste">
+                <span class="ponto-badge"><i class="fa-solid fa-leaf"></i> ZELADORIA</span>
+                <h3><i class="fa-solid fa-building-user"></i> 1. Zeladoria da Região Leste</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Avenida Reinaldo Figueiredo Bastos, nº 31, Parque Primavera.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sexta-feira, das 7h às 13h.</p>
+            </div>
+
+            <div class="ponto-item zeladoria" id="ponto-oeste">
+                <span class="ponto-badge"><i class="fa-solid fa-leaf"></i> ZELADORIA</span>
+                <h3><i class="fa-solid fa-building-user"></i> 2. Zeladoria da Região Oeste</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Rua São José, nº 457, Jardim Country Club.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sexta-feira, das 11h às 17h.</p>
+            </div>
+
+            <div class="ponto-item zeladoria" id="ponto-sul">
+                <span class="ponto-badge"><i class="fa-solid fa-leaf"></i> ZELADORIA</span>
+                <h3><i class="fa-solid fa-building-user"></i> 3. Zeladoria da Região Sul</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Rua Pedro Paulo Rodrigues Lemos, nº 195, Cohab.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sexta-feira, das 7h às 17h.</p>
+            </div>
+
+            <div class="ponto-item centro" id="ponto-centro">
+                <span class="ponto-badge"><i class="fa-solid fa-utensils"></i> PÚBLICO</span>
+                <h3><i class="fa-solid fa-utensils"></i> 4. Restaurante Popular</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Avenida Francisco Salles, nº 935, Centro.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sábado, das 11h às 14h.</p>
+            </div>
+
+            <div class="ponto-item comercio" id="ponto-alcoa">
+                <span class="ponto-badge"><i class="fa-solid fa-industry"></i> INDÚSTRIA</span>
+                <h3><i class="fa-solid fa-industry"></i> 5. Alcoa</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Rodovia Poços–Andradas, km 10, s/n.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sexta-feira, das 8h às 16h45.</p>
+            </div>
+
+            <div class="ponto-item centro comercio">
+                <span class="ponto-badge"><i class="fa-solid fa-capsules"></i> FARMÁCIA</span>
+                <h3><i class="fa-solid fa-prescription-bottle-medical"></i> 6. Drogaria São Paulo (Assis Figueiredo)</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Rua Assis Figueiredo, nº 925, Centro.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sexta-feira, das 6h às 23h; Sábados e domingos, das 7h às 23h.</p>
+            </div>
+
+            <div class="ponto-item centro comercio">
+                <span class="ponto-badge"><i class="fa-solid fa-capsules"></i> FARMÁCIA</span>
+                <h3><i class="fa-solid fa-prescription-bottle-medical"></i> 7. Drogaria São Paulo (João Pinheiro)</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Avenida João Pinheiro, nº 258, Centro.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a domingo, das 7h às 23h.</p>
+            </div>
+
+            <div class="ponto-item centro comercio">
+                <span class="ponto-badge"><i class="fa-solid fa-clock"></i> 24 HORAS</span>
+                <h3><i class="fa-solid fa-prescription-bottle-medical"></i> 8. Drogaria São Paulo (24 Horas)</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Rua Assis Figueiredo, nº 1.279, Centro.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Funcionamento 24 horas.</p>
+            </div>
+
+            <div class="ponto-item centro comercio">
+                <span class="ponto-badge"><i class="fa-solid fa-store"></i> LOJA</span>
+                <h3><i class="fa-solid fa-store"></i> 9. Casas Bahia</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Avenida Francisco Salles, nº 587, Centro.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sexta-feira, das 9h às 18h.</p>
+            </div>
+
+            <div class="ponto-item centro comercio">
+                <span class="ponto-badge"><i class="fa-solid fa-store"></i> LOJA</span>
+                <h3><i class="fa-solid fa-store"></i> 10. Magazine Luiza (Centro)</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Rua Assis Figueiredo, nº 1.132, Centro.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sexta-feira, das 9h às 18h; Sábado, das 9h às 15h.</p>
+            </div>
+
+            <div class="ponto-item comercio" id="ponto-shopping">
+                <span class="ponto-badge"><i class="fa-solid fa-bag-shopping"></i> SHOPPING</span>
+                <h3><i class="fa-solid fa-bag-shopping"></i> 11. Magazine Luiza — Partage Shopping</h3>
+                <p><i class="fa-solid fa-location-dot"></i> <strong>Endereço:</strong> Avenida Sílvio Monteiro dos Santos, nº 180, Partage Shopping.</p>
+                <p><i class="fa-regular fa-clock"></i> <strong>Horário:</strong> Segunda a sábado: das 10h às 22h | Domingos: das 14h às 20h.</p>
+            </div>
+
+        </section>
+
+        <!-- SEÇÃO 2: PESQUISA CIENTÍFICA -->
+        <section id="pesquisa" class="section-card">
+            <h2 class="section-title">
+                <i class="fa-solid fa-flask"></i> Pesquisa Científica da Turma
+            </h2>
+
+            <div class="calc-box">
+                <h3><i class="fa-solid fa-calculator"></i> Simule seu Impacto Ambiental <i class="fa-solid fa-leaf"></i></h3>
+                <p style="font-size: 0.85rem; margin-bottom: 10px; color: #444;">Digite quantas pilhas usadas você tem em casa e veja quanto meio ambiente você preserva descartando-as nos pontos do app:</p>
+                <div class="calc-input-group">
+                    <input type="number" id="numPilhas" placeholder="Ex: 5" min="1" value="3">
+                    <button onclick="calcularImpacto()"><i class="fa-solid fa-bolt"></i> Calcular</button>
+                </div>
+                <div class="calc-results">
+                    <div class="result-card">
+                        <div class="num" id="resAgua">102.000 L</div>
+                        <div class="label"><i class="fa-solid fa-droplet" style="color:#0284C7"></i> Água potável protegida</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="num" id="resSolo">3 m²</div>
+                        <div class="label"><i class="fa-solid fa-mountain-sun" style="color:#15803D"></i> Solo livre de contaminação</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><i class="fa-solid fa-atom"></i> 1. A ciência das pilhas</span>
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>As pilhas geram energia através de reações eletroquímicas contendo metais pesados. Compreender sua estrutura nos ajuda a perceber o valor do descarte e reciclagem correta.</p>
+                    
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Pilha</th>
+                                    <th>Metais Principais</th>
+                                    <th>Reciclabilidade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Comum (Zinco-Carvão)</td>
+                                    <td>Zinco, Manganês</td>
+                                    <td>Média</td>
+                                </tr>
+                                <tr>
+                                    <td>Alcalina</td>
+                                    <td>Zinco, Manganês</td>
+                                    <td>Alta (Reaproveitamento)</td>
+                                </tr>
+                                <tr>
+                                    <td>Recarregável (NiMH/Lítio)</td>
+                                    <td>Níquel, Lítio, Cobre</td>
+                                    <td>Muito Alta</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <img src="pilha-estrutura.jpg" alt="Estrutura Interna de uma Pilha" class="content-image" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><i class="fa-solid fa-triangle-exclamation"></i> 2. Os riscos do descarte incorreto</span>
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>O descarte incorreto de pilhas pode causar a contaminação do solo e da água, prejudicando o meio ambiente e a saúde das pessoas. Isso acontece porque algumas pilhas contêm metais e substâncias químicas que podem ser tóxicas. Por isso, não devemos abrir pilhas nem jogá-las no lixo comum. O correto é levá-las a pontos de coleta específicos, onde serão destinadas à reciclagem ou ao tratamento adequado.</p>
+                    
+                    <div class="metals-grid">
+                        <div class="metal-card">
+                            <strong>Mercúrio (Hg)</strong>
+                            Afeta o sistema nervoso central e os rins.
+                        </div>
+                        <div class="metal-card">
+                            <strong>Cádmio (Cd)</strong>
+                            Bioacumulativo nos ossos e no fígado.
+                        </div>
+                        <div class="metal-card">
+                            <strong>Chumbo (Pb)</strong>
+                            Prejudica o sistema circulatório.
+                        </div>
+                    </div>
+
+                    <img src="impacto-ambiental.jpg" alt="Impactos do descarte incorreto de pilhas" class="content-image" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><i class="fa-solid fa-users"></i> 3. Conscientização e Responsabilidade Ambiental</span>
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>O descarte inadequado de pilhas pode contaminar o solo e a água, afetando a saúde das pessoas e a qualidade de vida das comunidades próximas às áreas contaminadas. Por isso, é essencial informar a população sobre esses riscos e ampliar o acesso a pontos de coleta adequados.</p>
+                    
+                    <div class="action-box">
+                        <h4><i class="fa-solid fa-hands-holding-circle"></i> Pequenas atitudes geram grandes mudanças!</h4>
+                        <p>Faça sua parte: informe-se, procure pontos de coleta e descarte suas pilhas corretamente. Essa é uma forma de cuidar da saúde pública e contribuir para a preservação do meio ambiente.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item active">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <span><i class="fa-solid fa-recycle"></i> 4. Processo de Reciclagem e Logística Reversa</span>
+                    <i class="fa-solid fa-chevron-down arrow-icon"></i>
+                </div>
+                <div class="accordion-content">
+                    <p>Através da logística reversa, os componentes metálicos das pilhas são separados e reaproveitados pela indústria, evitando a degradação ambiental no município de Poços de Caldas. Entenda as 4 etapas essenciais:</p>
+                    
+                    <div class="recycling-steps">
+                        <div class="step-card">
+                            <h5><i class="fa-solid fa-truck-ramp-box" style="color:var(--verde-esmeralda)"></i> 1. Coleta e Transporte</h5>
+                            <p>As pilhas são recolhidas nos 11 pontos da cidade e armazenadas em recipientes secos antes do envio seguro para as usinas especializadas.</p>
+                        </div>
+                        <div class="step-card">
+                            <h5><i class="fa-solid fa-gears" style="color:var(--verde-esmeralda)"></i> 2. Trituração e Moagem</h5>
+                            <p>Passam por processos mecânicos para romper a capa externa e expor o pó interno contendo zinco, manganês e carvão.</p>
+                        </div>
+                        <div class="step-card">
+                            <h5><i class="fa-solid fa-magnet" style="color:var(--verde-esmeralda)"></i> 3. Triagem Magnética</h5>
+                            <p>Eletroímãs potentes separam a carcaça de ferro e aço, direcionando a liga metálica limpa diretamente para a siderurgia.</p>
+                        </div>
+                        <div class="step-card">
+                            <h5><i class="fa-solid fa-vial-virus" style="color:var(--verde-esmeralda)"></i> 4. Tratamento Químico e Reuso</h5>
+                            <p>Via hidrometalurgia, os metais purificados retornam como matéria-prima para tintas, cosméticos, pilhas novas e fertilizantes agrícolas.</p>
+                        </div>
+                    </div>
+
+                    <img src="reciclagem-pilhas.jpg" alt="Processo de Reciclagem de Pilhas" class="content-image" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 3: PROJETO ESCOLAR -->
+        <section id="escola" class="section-card">
+            <h2 class="section-title">
+                <i class="fa-solid fa-school"></i> Sobre o Projeto Escolar
+            </h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="value"><i class="fa-solid fa-battery-three-quarters"></i> 1.520</div>
+                    <div class="desc">Pilhas Arrecadadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value"><i class="fa-solid fa-map-pin"></i> 11</div>
+                    <div class="desc">Pontos Mapeados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value"><i class="fa-solid fa-earth-americas"></i> 100%</div>
+                    <div class="desc">Engajamento</div>
+                </div>
+            </div>
+
+            <div class="progress-box">
+                <div style="display:flex; justify-content:space-between; font-weight:600; font-size:0.88rem; color:var(--verde-musgo);">
+                    <span><i class="fa-solid fa-bullseye"></i> Meta de Arrecadação da Campanha</span>
+                    <span>1.520 / 2.000 (76%)</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fa-solid fa-bulltarget"></i> Nossa Iniciativa</h3>
+                <p>O projeto "Pilhas em Rota" é desenvolvido pelos alunos com o objetivo de informar e engajar a comunidade de Poços de Caldas na destinação correta de resíduos de pilhas e baterias.</p>
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fa-solid fa-images"></i> Registros das Ações da Turma</h3>
+                <img src="foto-turma.jpg" alt="Alunos trabalhando no projeto ambiental" class="content-image" onerror="this.style.display='none'">
+            </div>
+
+            <div class="info-box">
+                <h3><i class="fa-solid fa-chart-line"></i> Total de Arrecadação por Etapa</h3>
+                <div class="chart-container">
+                    <canvas id="meuGrafico"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 4: COMPARTILHAR E RESUMO -->
+        <section id="compartilhar" class="section-card">
+            <h2 class="section-title">
+                <i class="fa-solid fa-share-nodes"></i> Compartilhar o Projeto
+            </h2>
+
+            <div class="share-container">
+                <p style="font-size: 0.9rem; color: #444;">
+                    Espalhe a conscientização ambiental! Compartilhe o aplicativo com amigos, familiares e redes sociais para incentivar o descarte correto de pilhas em Poços de Caldas:
+                </p>
+
+                <div class="share-buttons">
+                    <button class="share-btn copy-btn" onclick="copiarLinkSite()">
+                        <i class="fa-solid fa-link"></i> <span id="btnCopyText">Copiar Link do Site</span>
+                    </button>
+                    <a id="btnWhatsappShare" class="share-btn" href="#" target="_blank">
+                        <i class="fa-brands fa-whatsapp"></i> Compartilhar no WhatsApp
+                    </a>
+                </div>
+
+                <!-- RESUMO DO PROJETO -->
+                <div class="info-box" style="margin-top: 20px; text-align: left;">
+                    <h3><i class="fa-solid fa-file-contract"></i> Resumo do Projeto "Pilhas em Rota"</h3>
+                    <ul class="summary-list">
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>Objetivo:</strong> Facilitar a localização de coletores de pilhas e baterias em Poços de Caldas (MG), prevenindo a contaminação do solo e da água.</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>Mapeamento:</strong> 11 pontos públicos e comerciais catalogados em todas as regiões da cidade (Centro, Leste, Oeste e Sul).</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>Educação Ambiental:</strong> Simulador de impacto em tempo real e conteúdos sobre a composição química e a reciclagem de metais.</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-circle-check"></i>
+                            <span><strong>Ação Escolar:</strong> Iniciativa estudantil com metas de arrecadação e engajamento da comunidade local.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>Pilhas em Rota <i class="fa-solid fa-leaf"></i> Projeto Escolar de Conscientização Ambiental — Poços de Caldas MG</p>
+    </footer>
+
+    <script>
+        function openSection(sectionId, element) {
+            document.querySelectorAll('.section-card').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            element.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            item.classList.toggle('active');
+        }
+
+        function carregarRegiaoMapa(nomeRegiao, urlMap, btn) {
+            document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('googleMapIframe').src = urlMap;
+        }
+
+        function filtrarPontos(categoria, btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const pontos = document.querySelectorAll('.ponto-item');
+            pontos.forEach(ponto => {
+                if (categoria === 'todos' || ponto.classList.contains(categoria)) {
+                    ponto.style.display = 'block';
+                } else {
+                    ponto.style.display = 'none';
+                }
+            });
+        }
+
+        function calcularImpacto() {
+            const qty = parseInt(document.getElementById('numPilhas').value) || 0;
+            const agua = (qty * 34000).toLocaleString('pt-BR');
+            const solo = (qty * 1).toLocaleString('pt-BR');
+            document.getElementById('resAgua').innerText = agua + ' L';
+            document.getElementById('resSolo').innerText = solo + ' m²';
+        }
+
+        function copiarLinkSite() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                const btnText = document.getElementById('btnCopyText');
+                btnText.innerText = "Link Copiado com Sucesso!";
+                setTimeout(() => { btnText.innerText = "Copiar Link do Site"; }, 2500);
+            }).catch(() => {
+                alert("Link do site: " + window.location.href);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            calcularImpacto();
+
+            const currentUrl = encodeURIComponent(window.location.href);
+            const mensagem = encodeURIComponent("Conheça o projeto Pilhas em Rota e encontre o ponto de descarte de pilhas mais próximo em Poços de Caldas: ") + currentUrl;
+            document.getElementById('btnWhatsappShare').href = "https://api.whatsapp.com/send?text=" + mensagem;
+
+            const ctx = document.getElementById('meuGrafico').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'],
+                    datasets: [{
+                        label: 'Pilhas Arrecadadas (Unidades)',
+                        data: [150, 320, 450, 600],
+                        backgroundColor: '#047857',
+                        borderColor: '#173D32',
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        });
+    </script>
+</body>
+</html>
